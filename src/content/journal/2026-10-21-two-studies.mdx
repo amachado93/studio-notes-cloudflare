@@ -1,0 +1,21 @@
+---
+title: Two studies
+publishedAt: 2026-10-21
+summary: A multi-image placeholder entry using the optional image-pair component.
+---
+
+import ImagePair from '../../components/ImagePair.astro';
+import study from '../../assets/journal/placeholder-study.png';
+import structure from '../../assets/journal/placeholder-structure.png';
+
+<ImagePair
+  images={[study, structure]}
+  alts={[
+    'Abstract development placeholder with concentric curved lines; not the artist\'s work',
+    'Abstract development placeholder with angular dark forms; not the artist\'s work',
+  ]}
+/>
+
+Two images can sit side by side when that helps. Ordinary separate Markdown images work too; this component is entirely optional.
+
+*These images are development placeholders, not the artist's work.*

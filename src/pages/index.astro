@@ -1,0 +1,15 @@
+---
+import JournalPage from '../layouts/JournalPage.astro';
+import { getJournalEntries } from '../lib/journal';
+import { site } from '../site';
+
+const entries = await getJournalEntries();
+const pageCount = Math.ceil(entries.length / site.entriesPerPage);
+---
+<JournalPage
+  entries={entries.slice(0, site.entriesPerPage)}
+  total={entries.length}
+  page={1}
+  pageCount={pageCount}
+  olderHref={pageCount > 1 ? '/journal/2/' : undefined}
+/>

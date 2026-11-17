@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { entryPath, formatDate, getJournalEntries, isoDate } from '../lib/journal';
+
+const entries = await getJournalEntries();
+const years = [...new Set(entries.map((entry) => entry.data.publishedAt.getUTCFullYear()))].sort((a, b) => b - a);
+---
+<BaseLayout title="Archive" description="A chronological index of all Studio Notes journal entries.">
+  <header class="page-heading">
+    <h1>Archive</h1>
+    <p>{entries.length} {entries.length === 1 ? 'entry' : 'entries'}, newest first.</p>
+  </header>
+  <div class="archive">
+    {years.map((year) => (
+      <section class="archive-year" aria-labelledby={`year-${year}`}>
+        <h2 id={`year-${year}`}>{year}</h2>
+        <ol>
+          {entries.filter((entry) => entry.data.publishedAt.getUTCFullYear() === year).map((entry) => (
+            <li>
+              <time datetime={isoDate(entry.data.publishedAt)}>{formatDate(entry.data.publishedAt)}</time>
+              <a href={entryPath(entry)}>{entry.data.title ?? 'Journal entry'}</a>
+              {entry.data.createdAt && <span class="archive-note">Artwork dated {formatDate(entry.data.createdAt)}</span>}
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

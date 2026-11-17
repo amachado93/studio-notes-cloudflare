@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import JournalEntry from '../components/JournalEntry.astro';
+import Pagination from '../components/Pagination.astro';
+import type { JournalEntry as JournalEntryType } from '../lib/journal';
+
+interface Props {
+  entries: JournalEntryType[];
+  total: number;
+  page: number;
+  pageCount: number;
+  newerHref?: string;
+  olderHref?: string;
+}
+
+const { entries, total, page, pageCount, newerHref, olderHref } = Astro.props;
+---
+<BaseLayout>
+  <div class="journal-list">
+    {entries.map((entry, index) => (
+      <JournalEntry entry={entry} number={total - ((page - 1) * 10 + index)} eager={page === 1 && index === 0} />
+    ))}
+  </div>
+  <Pagination page={page} pageCount={pageCount} newerHref={newerHref} olderHref={olderHref} />
+</BaseLayout>

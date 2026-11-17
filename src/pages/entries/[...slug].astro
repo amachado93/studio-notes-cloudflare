@@ -1,0 +1,27 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import JournalEntry from '../../components/JournalEntry.astro';
+import { entryDescription, getJournalEntries, type JournalEntry as JournalEntryType } from '../../lib/journal';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const entries = await getJournalEntries();
+  return entries.map((entry, index) => ({
+    params: { slug: entry.id },
+    props: { entry, number: entries.length - index },
+  }));
+};
+
+interface Props {
+  entry: JournalEntryType;
+  number: number;
+}
+
+const { entry, number } = Astro.props;
+---
+<BaseLayout title={entry.data.title ?? `Entry ${String(number).padStart(3, '0')}`} description={entryDescription(entry)}>
+  <div class="permalink-heading">
+    <a class="back-link" href="/">← Back to journal</a>
+  </div>
+  <JournalEntry entry={entry} number={number} permalink eager />
+</BaseLayout>

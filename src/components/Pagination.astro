@@ -1,0 +1,17 @@
+---
+interface Props {
+  newerHref?: string;
+  olderHref?: string;
+  page: number;
+  pageCount: number;
+}
+
+const { newerHref, olderHref, page, pageCount } = Astro.props;
+---
+{pageCount > 1 && (
+  <nav class="pagination" aria-label="Journal pages">
+    <div>{newerHref && <a href={newerHref}>← Newer entries</a>}</div>
+    <p>Page {page} of {pageCount}</p>
+    <div>{olderHref && <a href={olderHref}>Older entries →</a>}</div>
+  </nav>
+)}

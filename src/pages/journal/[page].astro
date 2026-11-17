@@ -1,0 +1,39 @@
+---
+import type { GetStaticPaths } from 'astro';
+import JournalPage from '../../layouts/JournalPage.astro';
+import { getJournalEntries, type JournalEntry } from '../../lib/journal';
+import { site } from '../../site';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const entries = await getJournalEntries();
+  const pageCount = Math.ceil(entries.length / site.entriesPerPage);
+
+  return Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => {
+    const page = index + 2;
+    const start = (page - 1) * site.entriesPerPage;
+    return {
+      params: { page: String(page) },
+      props: {
+        entries: entries.slice(start, start + site.entriesPerPage),
+        total: entries.length,
+        page,
+        pageCount,
+        newerHref: page === 2 ? '/' : `/journal/${page - 1}/`,
+        olderHref: page < pageCount ? `/journal/${page + 1}/` : undefined,
+      },
+    };
+  });
+};
+
+interface Props {
+  entries: JournalEntry[];
+  total: number;
+  page: number;
+  pageCount: number;
+  newerHref?: string;
+  olderHref?: string;
+}
+
+const { entries, total, page, pageCount, newerHref, olderHref } = Astro.props;
+---
+<JournalPage entries={entries} total={total} page={page} pageCount={pageCount} newerHref={newerHref} olderHref={olderHref} />

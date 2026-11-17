@@ -1,0 +1,40 @@
+---
+import { render } from 'astro:content';
+import { formatDate, isoDate, entryPath, type JournalEntry } from '../lib/journal';
+
+interface Props {
+  entry: JournalEntry;
+  number: number;
+  permalink?: boolean;
+  eager?: boolean;
+}
+
+const { entry, number, permalink = false, eager = false } = Astro.props;
+const { Content } = await render(entry);
+const displayDate = entry.data.createdAt ?? entry.data.publishedAt;
+const entryLabel = entry.data.title ?? `Entry ${String(number).padStart(3, '0')}`;
+---
+<article class="journal-entry" aria-label={entryLabel}>
+  <div class="entry-meta">
+    <a class="entry-number" href={entryPath(entry)} aria-label={`Entry ${String(number).padStart(3, '0')}, permanent link`}>
+      {String(number).padStart(3, '0')}
+    </a>
+    <div class="entry-dates">
+      <time datetime={isoDate(displayDate)}>{formatDate(displayDate)}</time>
+      {entry.data.createdAt && (
+        <span class="date-context">Published <time datetime={isoDate(entry.data.publishedAt)}>{formatDate(entry.data.publishedAt)}</time></span>
+      )}
+    </div>
+  </div>
+  <div class="entry-content">
+    {entry.data.title && (
+      <h2 id={`entry-${entry.id}`} class="entry-title">
+        {permalink ? entry.data.title : <a href={entryPath(entry)}>{entry.data.title}</a>}
+      </h2>
+    )}
+    <div class="prose">
+      <Content loading={eager ? 'eager' : 'lazy'} />
+    </div>
+    {!permalink && <a class="entry-permalink" href={entryPath(entry)}>View entry <span aria-hidden="true">↗</span></a>}
+  </div>
+</article>

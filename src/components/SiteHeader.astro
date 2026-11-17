@@ -1,0 +1,23 @@
+---
+import { site } from '../site';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+const links = [
+  { href: '/', label: 'Journal', active: currentPath === '/' || currentPath.startsWith('/journal/') || currentPath.startsWith('/entries/') },
+  { href: '/archive/', label: 'Archive', active: currentPath === '/archive/' },
+  { href: '/about/', label: 'About', active: currentPath === '/about/' },
+];
+---
+<header class="site-header shell">
+  <a class="wordmark" href="/" aria-label={`${site.title}, journal home`}>{site.title}</a>
+  <nav class="site-nav" aria-label="Main navigation">
+    {links.map((link) => (
+      <a href={link.href} aria-current={link.active ? 'page' : undefined}>{link.label}</a>
+    ))}
+    <a class="rss-link" href="/rss.xml">RSS <span aria-hidden="true">↗</span></a>
+  </nav>
+</header>
